@@ -348,8 +348,11 @@ public class Registro extends javax.swing.JFrame implements Observer {
     
     private void buscador(String busqueda) {
         Predicate<Multa> byDni = multa -> multa.getDni().contains(busqueda);
-        ArrayList<Multa> listaFiltrada = (ArrayList) lstMultas.stream().filter(byDni).collect(Collectors.toList());
-        llenarTabla(listaFiltrada);
+        Predicate<Multa> byMulta = multa -> multa.getMulta().toLowerCase().contains(busqueda.toLowerCase());
+        ArrayList<Multa> listaFiltradaDNI   = (ArrayList) lstMultas.stream().filter(byDni).collect(Collectors.toList());
+        ArrayList<Multa> listaFiltradaMulta = (ArrayList) lstMultas.stream().filter(byMulta).collect(Collectors.toList());
+        listaFiltradaDNI.addAll(listaFiltradaMulta);
+        llenarTabla(listaFiltradaDNI);
     }
     
     private void validarDNI(String dni) {
