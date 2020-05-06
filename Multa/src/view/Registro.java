@@ -8,9 +8,10 @@ package view;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -28,10 +29,9 @@ import model.Respuesta;
  *
  * @author diego
  */
-public class Registro extends javax.swing.JFrame /*implements Observer */{
+public class Registro extends javax.swing.JFrame implements Observer {
 
     ArrayList<Multa> lstMultas = new ArrayList<>();
-    ArrayList<Multa> lstMultasBorradas = new ArrayList<>();
     ArrayList<String> lstTipoMultas = new ArrayList<>();
     /**
      * Creates new form Registro
@@ -51,7 +51,6 @@ public class Registro extends javax.swing.JFrame /*implements Observer */{
             System.err.println("LISTA: "+lstMultas.size());
         }
         llenarTabla(lstMultas);
-        llenarComboTipoMulta(lstTipoMultas);
        
     }
     /**
@@ -272,14 +271,7 @@ public class Registro extends javax.swing.JFrame /*implements Observer */{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void llenarComboTipoMulta(ArrayList<String> lstTipoMultas) {
-        DefaultComboBoxModel dml = new DefaultComboBoxModel();
-        dml.addElement("::: Selec. Multa :::");
-        for (String descTipMulta : lstTipoMultas) {
-            dml.addElement(descTipMulta);
-        }
-        cmbTipos.setModel(dml);
-    }
+   
     
     private void initComponents2() {
         txtDNI.getDocument().addDocumentListener(new DocumentListener() {
@@ -400,7 +392,6 @@ public static String fechaActual(){
                 for(Multa m : lstMultas) {
                     if(m.getIdMulta() == idMultaModif) {
                         lstMultas.remove(m);
-                        lstMultasBorradas.add(m);
                         break;
                     }
                 }
@@ -526,7 +517,7 @@ public static String fechaActual(){
         jScrollPane1.setViewportView(tbMultas);
     }
     
-  /*  @Override
+    @Override
         public void update(Observable o, Object arg) { // RECIBO LO ENVIADO POR EL changeData()
         Multa multRest = (Multa) arg;
         Servicio servicio = new Servicio();
@@ -539,7 +530,7 @@ public static String fechaActual(){
             llenarTabla(lstMultas);
         }
         JOptionPane.showMessageDialog(this, rpta.getMsj());
-    }*/
+    }
     /**
      * @param args the command line arguments
      */

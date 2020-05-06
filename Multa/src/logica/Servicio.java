@@ -440,7 +440,7 @@ public class Servicio {
                 } else if(arrCantMultUltMeses[0] == 0) {
                     multa.setMonto(multa.getMonto() - (multa.getMonto() * 0.05) );
                 }
-            }
+            } 
        
             Connection con = Conexion.startConeccion();
             String sql = "call actualizar_multa(?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -478,7 +478,7 @@ public class Servicio {
     public Respuesta actualizarMulta(Multa multa) {
         Respuesta rpta = new Respuesta();
         try {
-            rpta = validar(multa);
+            rpta = validar(multa); 
             if(rpta.getCodigo() != 0) {
                 return rpta;
             }
