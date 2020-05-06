@@ -11,6 +11,13 @@ public class Multa {
     private String correo;
     private int punto;
     private Date fecha;
+    private int id;
+    private String idusuario;
+    private String clave;
+    private Double montomulta;
+    private String nombremulta;
+    private Date fec_eliminado;
+
 
     public String getDni() {
         return dni;
@@ -67,4 +74,53 @@ public class Multa {
     public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getClave() {
+        return clave;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
+    }
+
+    public String getIdusuario() {
+        return idusuario;
+    }
+
+    public void setIdusuario(String idusuario) {
+        this.idusuario = idusuario;
+    }
+
+    public Double getMontomulta() {
+        return montomulta;
+    }
+
+    public void setMontomulta(Double montomulta) {
+        this.montomulta = montomulta;
+    }
+
+    public String getNombremulta() {
+        return nombremulta;
+    }
+
+    public void setNombremulta(String nombremulta) {
+        this.nombremulta = nombremulta;
+    }
+
+    public Date getFec_eliminado() {
+        return fec_eliminado;
+    }
+
+    public void setFec_eliminado(Date fec_eliminado) {
+        this.fec_eliminado = fec_eliminado;
+    }
+
 }

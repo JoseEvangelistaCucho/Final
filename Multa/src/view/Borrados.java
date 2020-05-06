@@ -1,18 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package view;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Observable;
+
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import logica.Servicio;
 import model.Multa;
+import model.Respuesta;
+
+
+
 
 /**
  *
@@ -20,47 +19,41 @@ import model.Multa;
  */
 public class Borrados extends javax.swing.JFrame {
 
-    final MessageObservable observable = new MessageObservable();
-    /**
-     * Creates new form Borrados
-     */
-    public Borrados(ArrayList<Multa> lstBorradas, Registro regiInstance) {
+  ArrayList<Multa> lstMultas = new ArrayList<>();
+  
+    public Borrados() {
         initComponents();
-        System.err.println("cantidad: "+lstBorradas.size());
-        llenarTabla(lstBorradas);
-        observable.addObserver(regiInstance); // AGREGANDO AL SUSCRIPTOR
+           Servicio servicio = new Servicio();
+            lstMultas = servicio.getMultasBorradas();
+            llenarTabla(lstMultas);
+
     }
     
-    class MessageObservable extends Observable {
-        MessageObservable() {	
-            super();
-        }
-        void changeData(Object data) {
-            setChanged(); // the two methods of Observable class
-            notifyObservers(data);
-        }
-    }
+    int  idMultaModif = 0;
     
-    private void llenarTabla(ArrayList<Multa> lista) {
-        DefaultTableModel model = new DefaultTableModel(new String[]{"DNI", "Multa", "Monto", "Correo", "Punto", "Id"}, 0);
+      private void llenarTabla(ArrayList<Multa> lista) {
+        DefaultTableModel model = new DefaultTableModel(new String[]{"ID", "DNI", "Multa", "Monto", "Correo", "Punto", "#"}, 0);
         int i = 1;
         for(Multa m : lista) {
-            model.addRow(new Object[]{i, m.getDni(), m.getMulta(), m.getMonto(), m.getCorreo(), m.getPunto(), m.getIdMulta()});
+            model.addRow(new Object[]{ m.getIdMulta(), m.getDni(), m.getMulta(), m.getMonto(), m.getCorreo(), m.getPunto(),i});
             i++;
         }
         tbBorrados = new JTable(model);
-        tbBorrados.removeColumn(tbBorrados.getColumnModel().getColumn(5));
-        ListSelectionListener lel = new ListSelectionListener(){
-            public void valueChanged(ListSelectionEvent event) {
-                if(!event.getValueIsAdjusting()) {
-                    setearDatos();
-                }
-            }
-        };
-        tbBorrados.getSelectionModel().addListSelectionListener(lel);
+        tbBorrados.removeColumn(tbBorrados.getColumnModel().getColumn(6));
+        
         jScrollPane1.setViewportView(tbBorrados);
     }
-
+      
+    private void setearDatos() {
+        String idMulta = tbBorrados.getModel().getValueAt(tbBorrados.getSelectedRow(), 0  )+"";
+        idMultaModif = Integer.parseInt(idMulta);
+       
+    }
+    
+  
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -73,17 +66,23 @@ public class Borrados extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbBorrados = new javax.swing.JTable();
         btnRestaurar = new javax.swing.JButton();
+        btnborrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         tbBorrados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "DNI", "Multa", "Monto", "Correo", "Puntos", "ID"
+                "DNI", "Multa", "Monto", "Correo", "Puntos", "Fecha Eliminado"
             }
         ));
+        tbBorrados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbBorradosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbBorrados);
 
         btnRestaurar.setText("Restaurar");
@@ -93,56 +92,86 @@ public class Borrados extends javax.swing.JFrame {
             }
         });
 
+        btnborrar.setText("Borrar");
+        btnborrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnborrarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(143, 143, 143)
-                .addComponent(btnRestaurar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnRestaurar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnborrar)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(btnRestaurar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnRestaurar)
+                    .addComponent(btnborrar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRestaurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestaurarActionPerformed
-        // TODO add your handling code here:
-        //multaRestaurar
-        observable.changeData(multaRestaurar); // NOTIFICIANDO A MIS SUBSCRIPTORES
-        // limpiar la lista
+             int dialogButton = JOptionPane.YES_NO_OPTION;
+        int dialogResult = JOptionPane.showConfirmDialog (null, "¿Estas seguro de Restaurar la multa?", "Warning", dialogButton);
+        if(dialogResult == JOptionPane.YES_OPTION){
+            Servicio servicio = new Servicio();
+            Respuesta rpta = new Respuesta();
+            rpta = servicio.restaurarmulta(idMultaModif);
+             rpta = servicio.borrarMultaBorrada(idMultaModif);
+            System.err.println(rpta.toString());
+                llenarTabla(lstMultas);
+                idMultaModif = 0;
+            
+            JOptionPane.showMessageDialog(this, rpta.getMsj());
+        }
+        
     }//GEN-LAST:event_btnRestaurarActionPerformed
 
-    Multa multaRestaurar = new Multa();
-    
-    private void setearDatos() {
-        String dni    = tbBorrados.getModel().getValueAt(tbBorrados.getSelectedRow(), 1  )+"";
-        String multa  = tbBorrados.getModel().getValueAt(tbBorrados.getSelectedRow(), 2  )+"";
-        String monto  = tbBorrados.getModel().getValueAt(tbBorrados.getSelectedRow(), 3 )+"";
-        String correo = tbBorrados.getModel().getValueAt(tbBorrados.getSelectedRow(), 4  )+"";
-        String punto  = tbBorrados.getModel().getValueAt(tbBorrados.getSelectedRow(), 5  )+"";
-        System.err.println(dni+" - "+multa+" - "+monto+" - "+correo+" - "+punto);
-        
-        multaRestaurar.setCorreo(correo);
-        multaRestaurar.setDni(dni);
-        multaRestaurar.setMonto(Double.parseDouble(monto));
-        multaRestaurar.setMulta(multa);
-        multaRestaurar.setPunto(Integer.parseInt(punto));
-        multaRestaurar.setFecha(new Date());
-    }
+    private void tbBorradosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbBorradosMouseClicked
+             
+    }//GEN-LAST:event_tbBorradosMouseClicked
+
+    private void btnborrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnborrarActionPerformed
+     int dialogButton = JOptionPane.YES_NO_OPTION;
+        int dialogResult = JOptionPane.showConfirmDialog (null, "¿Estas seguro de borrar la multa?", "Warning", dialogButton);
+        if(dialogResult == JOptionPane.YES_OPTION){
+            Servicio servicio = new Servicio();
+            Respuesta rpta = new Respuesta();
+            rpta = servicio.borrarMultaBorrada(idMultaModif);
+            System.err.println(rpta.toString());
+            if(rpta.getCodigo() == 0) {
+                for(Multa m : lstMultas) {
+                    if(m.getIdMulta() == idMultaModif) {
+                        lstMultas.remove(m);
+                     llenarTabla(lstMultas);
+                        break;
+                    }
+                }
+                idMultaModif = 0;
+             
+            }
+            JOptionPane.showMessageDialog(this, rpta.getMsj());
+        }
+    }//GEN-LAST:event_btnborrarActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -152,7 +181,7 @@ public class Borrados extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
+     /*   try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -167,19 +196,20 @@ public class Borrados extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Borrados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Borrados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
+        }*/
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Borrados(null, null).setVisible(true);
+                new Borrados().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRestaurar;
+    private javax.swing.JButton btnborrar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tbBorrados;
     // End of variables declaration//GEN-END:variables
